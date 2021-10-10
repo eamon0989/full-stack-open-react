@@ -1,0 +1,15 @@
+Create a similar diagram depicting the situation where the user
+creates a new note on page https://studies.cs.helsinki.fi/exampleapp/notes
+by writing something into the text field and clicking the submit button.
+
+browser->server: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note
+                 body: 'text input to form'
+server->browser: redirect code 302, location header: /exampleapp/notes
+browser->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/notes
+server-->browser: HTML-code
+browser->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/main.css
+server-->browser: main.css
+browser->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/main.js
+server-->browser: main.js
+browser->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/data.json
+server-->browser: data.json

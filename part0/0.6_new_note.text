@@ -1,0 +1,4 @@
+browser->server: HTTP PST1 https://fullstack-exampleapp.herokuapp.com/spa
+                  'Content-Type: application/json'
+server-->browser: 201 created
+browser calls the event handler that renders the notes

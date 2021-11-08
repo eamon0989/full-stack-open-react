@@ -6,7 +6,7 @@ const api_key = process.env.REACT_APP_API_KEY
 const Country = ({ country, showCountry }) => {
   return (
     <>
-      <li>{country.name.common}<button onClick={showCountry}> show</button></li>
+      <li>{country.name.common}<button onClick={showCountry} id={country.name.common} > show</button></li>
     </>
   )
 }
@@ -14,16 +14,16 @@ const Country = ({ country, showCountry }) => {
 const SingleCountry = (props) => {
   const displayCountry = props.country[0];
   const [ weather, setWeather ] = useState({})
+  const capital = displayCountry.capital;
+
 
   const hook = () => {
-    const capital = displayCountry.capital;
-
     axios
     .get(`http://api.weatherapi.com/v1/current.json?key=${api_key}&q=${capital}`)
     .then(res => setWeather(res.data))
   }
 
-  useEffect(hook, [])
+  useEffect(hook, [capital])
 
   if (weather?.current) {
     return (
@@ -44,6 +44,7 @@ const SingleCountry = (props) => {
       </li>
     )
   } else {
+    console.log(displayCountry);
     return (
       <li>
         <h1>{displayCountry.name.common}</h1>
@@ -91,6 +92,7 @@ const Search = ({ updateSearch }) => {
 
 function App() {
   const [ countries, setCountries ] = useState([])
+  const [ country, setCountry ] = useState('')
   const [ search, setSearch ] = useState('')
   const [ showAll, setShowAll ] = useState(true)
 
@@ -100,6 +102,12 @@ function App() {
   const updateSearch = (event) => {
     setSearch(event.target.value)
     setShowAll(false)
+    setCountry('');
+  }
+
+  const showCountry = (event) => {
+    let country = countries.filter(country => country.name.common === event.target.id)
+    setCountry(country)
   }
 
   const hook = () => {
@@ -115,12 +123,21 @@ function App() {
 
   useEffect(hook, [])
 
-  return (
-    <>
-      <Search updateSearch={updateSearch} />
-      <Countries countries={countriesToShow} />
-    </>
-  )
+  if (country) {
+    return (
+      <>
+        <Search updateSearch={updateSearch} />
+        <SingleCountry country={country} />
+      </>
+    )
+  } else {
+    return (
+      <>
+        <Search updateSearch={updateSearch} />
+        <Countries countries={countriesToShow} showCountry={showCountry} />
+      </>
+    )
+  }
 }
 
 export default App;

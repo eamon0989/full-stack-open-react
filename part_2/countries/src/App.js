@@ -38,21 +38,15 @@ function App() {
 
   useEffect(hook, [])
 
-  if (country) {
-    return (
-      <>
-        <Search updateSearch={updateSearch} />
+  return (
+    <>
+      <Search updateSearch={updateSearch} />
+      {country ? 
         <SingleCountry country={country} />
-      </>
-    )
-  } else {
-    return (
-      <>
-        <Search updateSearch={updateSearch} />
-        <Countries countries={countriesToShow} showCountry={showCountry} />
-      </>
-    )
-  }
+        : <Countries countries={countriesToShow} showCountry={showCountry} />
+      }
+    </>
+  )
 }
 
 export default App;

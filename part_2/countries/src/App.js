@@ -1,94 +1,9 @@
 import './App.css';
 import axios from 'axios';
 import { useState, useEffect } from 'react';
-const api_key = process.env.REACT_APP_API_KEY
-
-const Country = ({ country, showCountry }) => {
-  return (
-    <>
-      <li>{country.name.common}<button onClick={showCountry} id={country.name.common} > show</button></li>
-    </>
-  )
-}
-
-const SingleCountry = (props) => {
-  const displayCountry = props.country[0];
-  const [ weather, setWeather ] = useState({})
-  const capital = displayCountry.capital;
-
-
-  const hook = () => {
-    axios
-    .get(`http://api.weatherapi.com/v1/current.json?key=${api_key}&q=${capital}`)
-    .then(res => setWeather(res.data))
-  }
-
-  useEffect(hook, [capital])
-
-  if (weather?.current) {
-    return (
-      <li>
-        <h1>{displayCountry.name.common}</h1>
-        <p>capital: {displayCountry.capital[0]}</p>
-        <p>population: {displayCountry.population}</p>
-        <h2>languages</h2>
-        <ul>
-          {Object.values(displayCountry.languages).map(lang => <li key={lang}>{lang}</li>)}
-        </ul>
-        <img src={displayCountry.flags.png} alt='flag' />
-
-        <h3>Weather in {weather.location.name}</h3>
-        <p><b>temperature:</b> {weather.current.temp_c}</p>
-        <img src={weather.current.condition.icon} alt='weather' />
-        <p><b>wind:</b> {weather.current.wind_kph} kph direction {weather.current.wind_dir}</p>
-      </li>
-    )
-  } else {
-    console.log(displayCountry);
-    return (
-      <li>
-        <h1>{displayCountry.name.common}</h1>
-        <p>capital: {displayCountry.capital[0]}</p>
-        <p>population: {displayCountry.population}</p>
-        <h2>languages</h2>
-        <ul>
-          {Object.values(displayCountry.languages).map(lang => <li key={lang}>{lang}</li>)}
-        </ul>
-        <img src={displayCountry.flags.png} alt='flag' />
-      </li>
-    )
-  }
-}
-
-const Countries = ({ countries, showCountry }) => {
-  if (countries.length > 10) {
-    return (
-      <ul>
-        <li>Too many matches, specify another filter</li>
-      </ul>
-    )
-  } else if (countries.length === 1) {
-    return (
-      <ul>
-        <SingleCountry country={countries} />
-      </ul>
-    )
-  } else {
-    return (
-      <ul>
-        {countries.map(country => <Country key={country.name.common} country={country} showCountry={showCountry} /> )}
-      </ul>
-    )
-  }
-}
-
-const Search = ({ updateSearch }) => {
-  return (
-    <>
-      find countries: <input onChange={updateSearch} />
-    </>
-  )
-}
+import { Search } from './components/search';
+import { SingleCountry } from './components/single_country';
+import { Countries } from './components/countries';
 
 function App() {
   const [ countries, setCountries ] = useState([])

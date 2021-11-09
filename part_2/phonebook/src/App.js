@@ -3,6 +3,7 @@ import { Search } from './components/search'
 import { Form } from './components/form'
 import { Persons } from './components/persons'
 import personService from './services/phonebook'
+import { Notification } from './components/notification'
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -19,6 +20,7 @@ const App = () => {
   const [ newNumber, setNewNumber ] = useState('')
   const [ newSearch, setNewSearch ] = useState('')
   const [ showAll, setShowAll ] = useState(true)
+  const [ message, setMessage ] = useState(null)
 
   const addPerson = (event) => {
     event.preventDefault();
@@ -36,6 +38,12 @@ const App = () => {
         personService.update(oldPerson.id, newPerson)
           .then(_ => {
             setPersons([...persons.filter(person => person.id !== oldPerson.id), newPerson])
+            setMessage(`${newPerson.name}'s number has been changed!`)
+            setTimeout(() => setMessage(null), 5000)
+          })
+          .catch(error => {
+            setMessage(`${oldPerson.name} has already been removed from the server`)
+            setTimeout(() => setMessage(null), 5000)
           })
       }
     } else {
@@ -49,6 +57,8 @@ const App = () => {
           setPersons(persons.concat(response))
           setNewName('')
           setNewNumber('')
+          setMessage(`Added ${newName}`)
+          setTimeout(() => setMessage(null), 5000)
         })
     }
   }
@@ -79,6 +89,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={message}/>
       <Search value={newSearch} onChange={handleSearchChange} />
       <h2> </h2>
       <Form addPerson={addPerson} newName={newName} handleNameChange={handleNameChange} newNumber={newNumber} handleNumberChange={handleNumberChange} />

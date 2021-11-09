@@ -2,15 +2,15 @@ import React, { useState, useEffect } from 'react'
 import { Search } from './components/search'
 import { Form } from './components/form'
 import { Persons } from './components/persons'
-import axios from 'axios'
+import personService from './services/phonebook'
 
 const App = () => {
   const [persons, setPersons] = useState([])
 
   const hook = () => {
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => setPersons(response.data))
+    personService
+      .getAll()
+      .then(response => setPersons(response))
   }
 
   useEffect(hook, [])
@@ -18,22 +18,38 @@ const App = () => {
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber ] = useState('')
   const [ newSearch, setNewSearch ] = useState('')
-  const [showAll, setShowAll] = useState(true)
+  const [ showAll, setShowAll ] = useState(true)
 
   const addPerson = (event) => {
     event.preventDefault();
+    let oldPerson;
 
-    if (persons.find(person => person.name === newName)) {
-      alert(`${newName} is already added to phonebook`)
+    if (persons.find(person => {
+      if (person.name === newName) {
+        oldPerson = person;
+      }
+
+      return person.name === newName
+    })) {
+      if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
+        let newPerson = { ...oldPerson, number: newNumber };
+        personService.update(oldPerson.id, newPerson)
+          .then(_ => {
+            setPersons([...persons.filter(person => person.id !== oldPerson.id), newPerson])
+          })
+      }
     } else {
       let personObject = {
         name: newName,
         number: newNumber,
       }
-  
-      setPersons(persons.concat(personObject))
-      setNewName('')
-      setNewNumber('')
+
+      personService.create(personObject)
+        .then(response => {
+          setPersons(persons.concat(response))
+          setNewName('')
+          setNewNumber('')
+        })
     }
   }
 
@@ -67,7 +83,7 @@ const App = () => {
       <h2> </h2>
       <Form addPerson={addPerson} newName={newName} handleNameChange={handleNameChange} newNumber={newNumber} handleNumberChange={handleNumberChange} />
       <h2>Numbers</h2>
-      <Persons personsToShow={personsToShow} />
+      <Persons personsToShow={personsToShow} setPersons={setPersons} persons={persons} />
     </div>
   )
 }

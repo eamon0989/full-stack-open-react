@@ -94,7 +94,7 @@ const App = () => {
       <h2> </h2>
       <Form addPerson={addPerson} newName={newName} handleNameChange={handleNameChange} newNumber={newNumber} handleNumberChange={handleNumberChange} />
       <h2>Numbers</h2>
-      <Persons personsToShow={personsToShow} setPersons={setPersons} persons={persons} />
+      <Persons personsToShow={personsToShow} setPersons={setPersons} setMessage={setMessage} persons={persons} />
     </div>
   )
 }

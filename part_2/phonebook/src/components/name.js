@@ -9,6 +9,7 @@ export const Name = ({ name, number, id, setPersons, persons, setMessage }) => {
           if (response === 'No Content') {
             setPersons(persons.filter(person => person.id !== event.target.id))
             setMessage(`${event.target.name} has been removed from the server`)
+            setTimeout(() => setMessage(null), 5000)
           }
         })
     }

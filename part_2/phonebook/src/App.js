@@ -54,6 +54,7 @@ const App = () => {
 
       personService.create(personObject)
         .then(response => {
+          console.log(response);
           setPersons(persons.concat(response))
           setNewName('')
           setNewNumber('')

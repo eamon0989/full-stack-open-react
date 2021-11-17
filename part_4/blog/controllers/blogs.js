@@ -1,14 +1,15 @@
 const express = require('express')
 const blogRouter = express.Router()
 const Blog = require('../models/blog')
-const middleware = require('../utils/middleware')
+const userExtractor = require('../utils/middleware').userExtractor
 
 blogRouter.get('/', async (request, response) => {
   const blogs = await Blog.find({}).populate('users')
+
   response.json(blogs)
 })
 
-blogRouter.post('/', middleware.userExtractor, async (request, response) => {
+blogRouter.post('/', userExtractor, async (request, response) => {
   const body = request.body
 
   const user = request.user
@@ -27,12 +28,10 @@ blogRouter.post('/', middleware.userExtractor, async (request, response) => {
   response.json(savedBlog)
 })
 
-blogRouter.delete('/:id', middleware.userExtractor, async (request, response) => {
+blogRouter.delete('/:id', userExtractor, async (request, response) => {
   const user = request.user
 
   const blog = await Blog.findById(request.params.id)
-  console.log(blog.user.toString())
-  console.log()
 
   if (blog.user.toString() === user._id.toString()) {
     await Blog.findByIdAndRemove(request.params.id)

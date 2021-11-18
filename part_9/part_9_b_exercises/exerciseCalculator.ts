@@ -8,12 +8,12 @@ interface returnValues {
   average: number 
 }
 
-interface CalculateValues {
+interface CalculateValues1 {
   target: number,
   dailyHours: Array<number>
 }
 
-const parseArguments = (args: Array<string>): CalculateValues => {
+const parseArguments1 = (args: Array<string>): CalculateValues1 => {
   if (args.length < 4) throw new Error('Not enough arguments');
   const array: Array<string> = args.slice(2);
   const numArray: Array<number> = array.map(Number);
@@ -57,7 +57,7 @@ const calculateExercises = (dailyHours: Array<number>, target: number): returnVa
 }
 
 try {
-  const { target, dailyHours } = parseArguments(process.argv);
+  const { target, dailyHours } = parseArguments1(process.argv);
   console.log(calculateExercises(dailyHours, target));
 } catch (error: unknown) {
   let errorMessage = 'Something bad happened.'

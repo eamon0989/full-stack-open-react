@@ -23,13 +23,13 @@ const parseArguments1 = (args: Array<string>): CalculateValues1 => {
     return {
       target: numArray[0],
       dailyHours: numArray.slice(1)
-    }
+    };
   } else {
     throw new Error('Provided values were not numbers!');
   }
-}
+};
 
-const calculateExercises = (dailyHours: Array<number>, target: number): returnValues => {
+export const calculateExercises = (dailyHours: Array<number>, target: number): returnValues => {
   const average: number = dailyHours.reduce((acc, num) => acc + num, 0) / dailyHours.length; 
   let rating: number;
   let ratingDescription: string;
@@ -53,14 +53,14 @@ const calculateExercises = (dailyHours: Array<number>, target: number): returnVa
     ratingDescription: ratingDescription,
     target: target,
     average: average 
-  }
-}
+  };
+};
 
 try {
   const { target, dailyHours } = parseArguments1(process.argv);
   console.log(calculateExercises(dailyHours, target));
 } catch (error: unknown) {
-  let errorMessage = 'Something bad happened.'
+  let errorMessage = 'Something bad happened.';
   if(error instanceof Error) {
     errorMessage += ' Error: ' + error.message;
   }

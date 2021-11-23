@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login' 
+import userService from './services/user' 
 import Notification from './components/Notification'
 import LoginForm from './components/LoginForm'
 import Togglable from './components/Togglable'
@@ -14,6 +15,7 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [message, setMessage] = useState(null) 
   const [user, setUser] = useState(null)
+  const [userId, setUserId] = useState('')
   const [title, setTitle] = useState('')
   const [url, setUrl] = useState('')
   const [author, setAuthor] = useState('')
@@ -31,8 +33,15 @@ const App = () => {
       const user = JSON.parse(loggedBlogappUser)
       setUser(user)
       blogService.setToken(user.token)
+      getUserIdFromServer(user)
     }
   }, [])  
+
+  const getUserIdFromServer = async (user) => {
+    const users = await userService.getAll()
+    const returnedUser = users.filter(usr => usr.username === user.username)
+    setUserId(returnedUser[0].id)
+  }
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -44,9 +53,10 @@ const App = () => {
       blogService.setToken(user.token)
       window.localStorage.setItem(
         'loggedBlogappUser', JSON.stringify(user)
-      ) 
+      )
 
       setUser(user)
+      getUserIdFromServer(user)
       setUsername('')
       setPassword('')
     } catch (exception) {
@@ -68,6 +78,7 @@ const App = () => {
     setUser(null)
     setUsername('')
     setPassword('')
+    setUserId('')
   }
 
   const submitNewBlog = async (event) => {
@@ -160,7 +171,7 @@ const App = () => {
 
       {blogs.sort((a, b) => b.likes - a.likes)
             .map(blog =>
-              <Blog key={blog.id} blog={blog} />
+              <Blog key={blog.id} user={user} blogs={blogs} setBlogs={setBlogs} blog={blog} setMessage={setMessage} userId={userId}/>
       )}
     </>
   )

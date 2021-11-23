@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import blogService from '../services/blogs'
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog, blogs, setBlogs, setMessage, userId }) => {
   const [viewDetails, setViewDetails] = useState(false)
   const [blogObj, setBlogObj] = useState(blog)
 
@@ -17,11 +17,25 @@ const Blog = ({ blog }) => {
     setViewDetails(!viewDetails)
   }
 
+  const removeBlog = async (event) => {
+    event.preventDefault()
+    const response = await blogService.removeBlog(blog.id)
+    console.log(response)
+    if (response === 204) {
+      setBlogs(blogs.filter(blogObj => blogObj.id !== blog.id))
+    } else if (response === 200) {
+      setMessage('You are not authorized to delete this blog')
+    }
+  }
+
   const showDetails = () => (
     <>
       <p>{blog.url}</p>
       <p>Likes: {blog.likes} <button onClick={addLike}>like</button></p>
       <p>{blog.author}</p>
+      {userId === blog.user ? 
+      <button onClick={removeBlog}>Remove</button>
+      : false}
     </>
   )
 

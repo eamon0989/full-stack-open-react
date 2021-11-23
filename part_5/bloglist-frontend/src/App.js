@@ -1,11 +1,15 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login' 
 import Notification from './components/Notification'
+import LoginForm from './components/LoginForm'
+import Togglable from './components/Togglable'
+import BlogForm from './components/BlogForm'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
+  const blogFormRef = useRef()
   const [username, setUsername] = useState('') 
   const [password, setPassword] = useState('')
   const [message, setMessage] = useState(null) 
@@ -13,6 +17,7 @@ const App = () => {
   const [title, setTitle] = useState('')
   const [url, setUrl] = useState('')
   const [author, setAuthor] = useState('')
+  const [loginVisible, setLoginVisible] = useState(false)
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -67,6 +72,8 @@ const App = () => {
 
   const submitNewBlog = async (event) => {
     event.preventDefault()
+    blogFormRef.current.toggleVisibility()
+
     const blogObject = {
       title: title,
       url: url,
@@ -85,29 +92,38 @@ const App = () => {
       })
   }
 
-  const loginForm = () => (
-    <form onSubmit={handleLogin}>
+  const loginForm = () => {
+    <Togglable>
+      <LoginForm 
+        username={username}
+        password={password}
+        handleUsernameChange={({ target }) => setUsername(target.value)}
+        handlePasswordChange={({ target }) => setPassword(target.value)}
+        handleSubmit={handleLogin}
+      />
+    </Togglable>
+    const hideWhenVisible = { display: loginVisible ? 'none' : '' }
+    const showWhenVisible = { display: loginVisible ? '' : 'none' }
+
+    return (
       <div>
-        username
-          <input
-          type="text"
-          value={username}
-          name="Username"
-          onChange={({ target }) => setUsername(target.value)}
-        />
+        <div style={hideWhenVisible}>
+          <button onClick={() => setLoginVisible(true)}>Log in</button>
+        </div>
+        
+        <div style={showWhenVisible}>
+          <LoginForm 
+            username={username}
+            password={password}
+            handleUsernameChange={({ target }) => setUsername(target.value)}
+            handlePasswordChange={({ target }) => setPassword(target.value)}
+            handleSubmit={handleLogin}
+          />
+          <button onClick={() => setLoginVisible(false)}>Cancel</button>
+        </div>
       </div>
-      <div>
-        password
-          <input
-          type="password"
-          value={password}
-          name="Password"
-          onChange={({ target }) => setPassword(target.value)}
-        />
-      </div>
-      <button type="submit">login</button>
-    </form>      
-  )
+    )
+  }
 
   if (user === null) {
     return (
@@ -130,33 +146,21 @@ const App = () => {
         <button type="submit">Logout</button>
       </form>
 
-      <form onSubmit={submitNewBlog}>
-        <label name='title'>Title:</label>
-        <input 
-          type='text' 
-          name='title' 
-          value={title}
-          onChange={({ target }) => setTitle(target.value)}
-        />
-        <label name='author'>Author:</label>
-        <input 
-          type='text' 
-          name='author' 
-          value={author}
-          onChange={({ target }) => setAuthor(target.value)}
-        />
-        <label name='url'>URL:</label>
-        <input 
-          type='text' 
-          name='url' 
-          value={url}
-          onChange={({ target }) => setUrl(target.value)}
-        />
-        <button type="submit">Create</button>
-      </form>
+      <Togglable buttonLabel="Create New" ref={blogFormRef}>
+        <BlogForm 
+          submitNewBlog={submitNewBlog} 
+          title={title} 
+          setTitle={setTitle} 
+          setAuthor={setAuthor} 
+          author={author} 
+          url={url} 
+          setUrl={setUrl} />
+      </Togglable>
 
-      {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+
+      {blogs.sort((a, b) => b.likes - a.likes)
+            .map(blog =>
+              <Blog key={blog.id} blog={blog} />
       )}
     </>
   )

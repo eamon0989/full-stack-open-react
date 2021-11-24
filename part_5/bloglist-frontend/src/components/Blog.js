@@ -3,7 +3,7 @@ import blogService from '../services/blogs'
 
 const Blog = ({ blog, blogs, setBlogs, setMessage, userId }) => {
   const [viewDetails, setViewDetails] = useState(false)
-  const [blogObj, setBlogObj] = useState(blog)
+  const [, setBlogObj] = useState(blog)
 
   const blogStyle = {
     paddingTop: 10,
@@ -33,25 +33,25 @@ const Blog = ({ blog, blogs, setBlogs, setMessage, userId }) => {
       <p>{blog.url}</p>
       <p>Likes: {blog.likes} <button onClick={addLike}>like</button></p>
       <p>{blog.author}</p>
-      {userId === blog.user ? 
-      <button onClick={removeBlog}>Remove</button>
-      : false}
+      {userId === blog.user ?
+        <button onClick={removeBlog}>Remove</button>
+        : false}
     </>
   )
 
   const addLike = async (event) => {
     event.preventDefault()
-    
+
     const likes = blog.likes += 1
     const updatedBlog = await blogService.update(`/${blog.id}`, { ...blog, likes })
     setBlogObj(updatedBlog)
   }
 
   return (
-  <div style={blogStyle}>
-    {blog.title} {blog.author} <button onClick={handleView}>view</button>
-    {viewDetails ? showDetails() : false}
-  </div>  
-)}
+    <div style={blogStyle}>
+      {blog.title} {blog.author} <button onClick={handleView}>view</button>
+      {viewDetails ? showDetails() : false}
+    </div>
+  )}
 
 export default Blog

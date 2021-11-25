@@ -37,7 +37,9 @@ const App = () => {
   const getUserIdFromServer = async (user) => {
     const users = await userService.getAll()
     const returnedUser = users.filter(usr => usr.username === user.username)
-    setUserId(returnedUser[0].id)
+    if (returnedUser[0]) {
+      setUserId(returnedUser[0].id)
+    }
   }
 
   const handleLogin = async (event) => {
@@ -106,7 +108,7 @@ const App = () => {
     return (
       <div>
         <div style={hideWhenVisible}>
-          <button onClick={() => setLoginVisible(true)}>Log in</button>
+          <button id='login-button' onClick={() => setLoginVisible(true)}>Log in</button>
         </div>
 
         <div style={showWhenVisible}>

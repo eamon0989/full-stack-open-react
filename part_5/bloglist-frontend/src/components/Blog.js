@@ -20,7 +20,7 @@ const Blog = ({ blog, blogs, setBlogs, setMessage, userId }) => {
   const removeBlog = async (event) => {
     event.preventDefault()
     const response = await blogService.removeBlog(blog.id)
-    console.log(response)
+
     if (response === 204) {
       setBlogs(blogs.filter(blogObj => blogObj.id !== blog.id))
     } else if (response === 200) {
@@ -48,7 +48,7 @@ const Blog = ({ blog, blogs, setBlogs, setMessage, userId }) => {
   }
 
   return (
-    <div style={blogStyle}>
+    <div className='blog' style={blogStyle}>
       {blog.title} {blog.author} <button onClick={handleView}>view</button>
       {viewDetails ? showDetails() : false}
     </div>

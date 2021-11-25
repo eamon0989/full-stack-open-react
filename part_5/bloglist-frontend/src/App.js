@@ -16,9 +16,6 @@ const App = () => {
   const [message, setMessage] = useState(null)
   const [user, setUser] = useState(null)
   const [userId, setUserId] = useState('')
-  const [title, setTitle] = useState('')
-  const [url, setUrl] = useState('')
-  const [author, setAuthor] = useState('')
   const [loginVisible, setLoginVisible] = useState(false)
 
   useEffect(() => {
@@ -81,24 +78,14 @@ const App = () => {
     setUserId('')
   }
 
-  const submitNewBlog = async (event) => {
-    event.preventDefault()
+  const submitNewBlog = async (newBlog) => {
     blogFormRef.current.toggleVisibility()
 
-    const blogObject = {
-      title: title,
-      url: url,
-      author: author,
-    }
-
     blogService
-      .create(blogObject)
+      .create(newBlog)
       .then(returnedBlog => {
         setBlogs(blogs.concat(returnedBlog))
-        setTitle('')
-        setUrl('')
-        setAuthor('')
-        setMessage(`A new blog ${blogObject.title} by ${blogObject.author} was added`)
+        setMessage(`A new blog ${newBlog.title} by ${newBlog.author} was added`)
         setTimeout(() => setMessage(null), 5000)
       })
   }
@@ -159,13 +146,7 @@ const App = () => {
 
       <Togglable buttonLabel="Create New" ref={blogFormRef}>
         <BlogForm
-          submitNewBlog={submitNewBlog}
-          title={title}
-          setTitle={setTitle}
-          setAuthor={setAuthor}
-          author={author}
-          url={url}
-          setUrl={setUrl} />
+          submitNewBlog={submitNewBlog} />
       </Togglable>
 
 
